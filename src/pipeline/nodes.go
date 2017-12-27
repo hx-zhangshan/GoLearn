@@ -82,7 +82,7 @@ func ReaderSource(reader io.Reader, chuakSize int) <-chan int {
 				v := int(binary.BigEndian.Uint64(buffer))
 				out <- v
 			}
-			if err != nil || (chuakSize != -1 && bytesread > chuakSize) {
+			if err != nil || (chuakSize != -1 && bytesread >=chuakSize) {
 				break
 			}
 		}

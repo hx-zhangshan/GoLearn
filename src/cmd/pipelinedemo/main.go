@@ -10,7 +10,7 @@ import (
 
 func main() {
 	const filename = "small.txt"
-	const n = 10000
+	const n = 64
 	start := time.Now().Nanosecond()
 	//create a file
 	file, err := os.Create(filename)
