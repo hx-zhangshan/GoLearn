@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	const filename = "small.txt"
-	const n = 64
+	const filename = "large.in"
+	const n = 100000000
 	start := time.Now().Nanosecond()
 	//create a file
 	file, err := os.Create(filename)

@@ -5,8 +5,13 @@ import (
 	"io"
 	"math/rand"
 	"sort"
+	"time"
+	"fmt"
 )
-
+var startime time.Time
+func Init(){
+	startime=time.Now()
+}
 //做一个函数 把数组放到通道里面 只从里面 拿东西
 func ArraySource(a ...int) <-chan int {
 	out := make(chan int)
@@ -25,15 +30,17 @@ func ArraySource(a ...int) <-chan int {
 在内存中排序
 */
 func InMeSort(in <-chan int) <-chan int {
-	out := make(chan int)
+	out := make(chan int,1024)
 	go func() {
 		//第一一个切片 但是是不可变的对象  要用append 去收取
 		p := []int{}
 		for v := range in {
 			p = append(p, v)
 		}
+		fmt.Println("read done:::",time.Now().Sub(startime))
 		//运用 标准库中的sort进行排序
 		sort.Ints(p)
+		fmt.Println("sort done:::",time.Now().Sub(startime))
 		//排序之后再放进通道里面
 		for _, v := range p {
 			out <- v
@@ -46,7 +53,7 @@ func InMeSort(in <-chan int) <-chan int {
 
 //进行合并 第三部 核心的算法
 func Merge(in1, in2 <-chan int) <-chan int {
-	out := make(chan int)
+	out := make(chan int,1024)
 	go func() {
 		v1, ok1 := <-in1
 		v2, ok2 := <-in2
@@ -63,6 +70,7 @@ func Merge(in1, in2 <-chan int) <-chan int {
 			}
 		}
 		close(out)
+		fmt.Println("Merge done:::",time.Now().Sub(startime))
 	}()
 	return out
 }
@@ -102,7 +110,7 @@ func WriteSink(writer io.Writer, in <-chan int) {
 
 //随机生成数字的 资源
 func RandomSource(count int) <-chan int {
-	out := make(chan int)
+	out := make(chan int,1024)
 	go func() {
 		for i := 0; i < count; i++ {
 			out <- rand.Int()
